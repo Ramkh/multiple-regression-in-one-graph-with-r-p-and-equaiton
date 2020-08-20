@@ -1,0 +1,54 @@
+pc<-prcomp(mba[,-c(1:3),],  center =TRUE, scale.=TRUE)
+attributes(pc)
+summary(pc)
+
+ram.pca <- prcomp(mba[,c(4:7)])
+summary(ram.pca)
+str(ram.pca)
+fviz_eig(ram.pca)
+ggbiplot(ram.pca, loadings.label = T, label.label='treat',labels.size=2, colour = treat)
+fviz_pca_ind(ram.pca, col.ind = "cos2", # Color by the quality of representation
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE     # Avoid text overlapping  
+)
+
+
+
+#Biplot
+library(ggbiplot)
+g<-ggbiplot(ram.pca, obs.scale = 1, var.scale = 1, groups=mba$Label, label.label=treat, loadings.label = TRUE, ellipse=TRUE, circle=TRUE, ellipse.prob=0.68)
+g<-g+scale_color_discrete(name ='')+theme(legend.direction = 'horizontal', legend.position = 'top')
+
+
+ggbiplot(pc, loadings.label = T, label.label=mba$treat,labels.size=1, colour = 'treat')
+print(g)
+
+
+summary(pc)
+Importance of components:
+                          PC1    PC2    PC3     PC4
+Standard deviation     1.3336 1.0857 0.8237 0.60346
+Proportion of Variance 0.4446 0.2947 0.1696 0.09104
+Cumulative Proportion  0.4446 0.7393 0.9090 1.00000
+> ram.pca <- prcomp(mba[,c(4:7)])
+> summary(ram.pca)
+Importance of components:
+                           PC1    PC2   PC3     PC4
+Standard deviation     16.4434 9.6218 7.938 5.53185
+Proportion of Variance  0.5922 0.2028 0.138 0.06702
+Cumulative Proportion   0.5922 0.7950 0.933 1.00000
+> str(ram.pca)
+List of 5
+ $ sdev    : num [1:4] 16.44 9.62 7.94 5.53
+ $ rotation: num [1:4, 1:4] 0.157 -0.0475 -0.9021 -0.3991 -0.7516 ...
+  ..- attr(*, "dimnames")=List of 2
+  .. ..$ : chr [1:4] "Severity" "Dual" "Non.volatile" "Volatile"
+  .. ..$ : chr [1:4] "PC1" "PC2" "PC3" "PC4"
+ $ center  : Named num [1:4] 29.3 59.1 78.7 32.2
+  ..- attr(*, "names")= chr [1:4] "Severity" "Dual" "Non.volatile" "Volatile"
+ $ scale   : logi FALSE
+ $ x       : num [1:33, 1:4] -2.93 -20.67 -14.08 6.76 30.39 ...
+  ..- attr(*, "dimnames")=List of 2
+  .. ..$ : NULL
+  .. ..$ : chr [1:4] "PC1" "PC2" "PC3" "PC4"
+ - attr(*, "class")= chr "prcomp"

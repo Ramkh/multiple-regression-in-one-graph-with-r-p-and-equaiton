@@ -1,0 +1,68 @@
+mba<-read.table(file="clipboard",sep="\t", header = TRUE)
+ 
+str(mba)
+library(MASS)
+fit <- lm(Rhiz_Sev~Phyto_dual+Pythium_dual+Rhizo_Dual+Rhizo_culturefiltrate+Pythium_vol.., data=mba)
+
+summary(fit)
+
+fit <- lm(Clubroot_sev~Phyto_dual+Pythium_dual+Rhizo_Dual+Rhizo_culturefiltrate+Pythium_vol.., data=mba)
+
+summary(fit)
+
+
+step <- stepAIC(fit, direction="both")
+step$anova # display results
+library(ggplot2);library(Ecdat)
+ggplot(data=mba, aes(x=Rhiz_Sev, y=Mycelium.growth.inhibition, col=Tests))+geom_point()
+library("ggplot2")
+library("ggpmisc")
+library(ggpubr)
+library(gridExtra)
+library(lattice)
+library(plyr)
+library(Rmisc)
+
+
+formula <- y  ~ poly(x, 1, raw = TRUE)
+p<- ggplot(data=mba, aes(x=Rhiz_Sev, y=Mycelium.growth.inhibition, col=Tests))+geom_point()+stat_smooth(method='lm', se = FALSE) #+stat_poly_eq(aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~~")),
+                            formula = formula, parse = TRUE)
+p
+q<-p+  labs(x = "Rhizoctonia root rot severity (%)",y = "Mycelial growth inhibition (%)")
+#r<-q+stat_cor(aes(color = Tests),method = "pearson", label.x = 3)# add r-square and P-value
+q
+
+p<- ggplot(data=mba, aes(x=Clubroot_sev, y=Mycelium.growth.inhibition, col=Tests))+geom_point()+stat_smooth(method='lm', se = FALSE) 
+#+stat_poly_eq(aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~~")),formula = formula, parse = TRUE)
+q2<- p+  labs(x = "Clubroot severity (%)",y = "Mycelial growth inhibition (%)")
+q2
+#r2<-q+stat_cor(aes(color = Tests), label.x = 3)+
+
+
+red3<-grid.arrange(q, q2, nrow=1)
+
+devtools::install_github("dkyleward/RDCOMClient")
+library(RDCOMClient)
+library(R2PPT)
+temp_file<-paste(tempfile(),".wmf", sep="")
+ggsave(temp_file, plot=q)
+
+mkppt <- PPT.Init(method="RDCOMClient")
+mkppt<-PPT.AddBlankSlide(mkppt)
+mkppt<-PPT.AddGraphicstoSlide(mkppt, file=temp_file)
+unlink(temp_file)
+
+
+
+devtools::install_github("dkyleward/RDCOMClient")
+library(RDCOMClient)
+library(R2PPT)
+temp_file<-paste(tempfile(),".wmf", sep="")
+ggsave(temp_file, plot=q2)
+
+mkppt <- PPT.Init(method="RDCOMClient")
+mkppt<-PPT.AddBlankSlide(mkppt)
+mkppt<-PPT.AddGraphicstoSlide(mkppt, file=temp_file)
+unlink(temp_file)
+
+  
